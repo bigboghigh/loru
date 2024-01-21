@@ -13,7 +13,7 @@ app.get('/processRequest', async (req, res) => {
   try {
     // Step 1: Fetch captchaImage from the first API
     const firstApiResponse = await axios.get('https://external-api.agilecdn.cloud/user/api/user/captchaImage');
-    let random = firstApiResponse.data.get('random');
+    let random = firstApiResponse.data.data.random
 
     // Step 2: Check captcha using the second API
     let captchaCheckResponse = await checkCaptcha(random);
