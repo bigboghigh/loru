@@ -4,8 +4,7 @@ const axios = require('axios');
 const app = express();
 const port = 3000;
 
-async function processCaptcha();
-{
+async function processCaptcha() {
   try {
     // Step 1: Send GET request to get captcha image
     const captchaImageResponse = await axios.get('https://external-api.agilecdn.cloud/user/api/user/captchaImage');
