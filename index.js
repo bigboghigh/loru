@@ -10,7 +10,7 @@ app.get('/getUserCaptcha', async (req, res) => {
     const captchaImageResponse = await axios.get('https://external-api.agilecdn.cloud/user/api/user/captchaImage');
 
     // Step 2: Extract random from the response
-    const random = captchaImageResponse.data.random;
+    const random = captchaImageResponse.data.data.random;
 
     // Step 3: Send GET request to check captcha with the extracted random
     const checkCaptchaResponse = await axios.get(`https://external-api.agilecdn.cloud/user/api/user/checkCaptcha?point=84&random=${random}`);
