@@ -16,7 +16,7 @@ async function getCaptcha() {
     const checkCaptchaResponse = await axios.get(`https://external-api.agilecdn.cloud/user/api/user/checkCaptcha?point=84&random=${random}`);
 
     // Step 4: Check if data is null in the second API response
-    if (checkCaptchaResponse.data.data.data === null) {
+    if (checkCaptchaResponse.data.data.data == null) {
       // If null, recursively call getCaptcha to retry the process
       return getCaptcha();
     }
