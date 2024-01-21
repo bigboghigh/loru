@@ -1,65 +1,51 @@
-const axios = require('axios');
 const express = require('express');
-const bodyParser = require('body-parser');
+const axios = require('axios');
 
 const app = express();
-const PORT = 3000;
+const port = 3000;
 
-app.use(bodyParser.json());
-
-let email; // Set the email from frontend when you receive the request
-
-app.get('/processRequest', async (req, res) => {
+app.get('/', async (req, res) => {
   try {
-    // Step 1: Fetch captchaImage from the first API
-    const firstApiResponse = await axios.get('https://external-api.agilecdn.cloud/user/api/user/captchaImage');
-    let random = firstApiResponse.data.data.random
+    let captchaImageResponse = await axios.get('https://external-api.agilecdn.cloud/user/api/user/captchaImage');
+    let random = captchaImageResponse.data.random;
 
-    // Step 2: Check captcha using the second API
-    let captchaCheckResponse = await checkCaptcha(random);
+    let checkCaptchaResponse;
+    do {
+      checkCaptchaResponse = await axios.get(https://external-api.agilecdn.cloud/user/api/user/checkCaptcha?point=84&random=${random});
+      if (checkCaptchaResponse.data.data === null) {
+        captchaImageResponse = await axios.get('https://external-api.agilecdn.cloud/user/api/user/captchaImage');
+        random = captchaImageResponse.data.random;
+      }
+    } while (checkCaptchaResponse.data.data === null);
 
-    while (captchaCheckResponse.data === null) {
-      // If data is still null, fetch a new captcha and repeat the process
-      const newFirstApiResponse = await axios.get('https://external-api.agilecdn.cloud/user/api/user/captchaImage');
-      random = newFirstApiResponse.data.data.random
-      captchaCheckResponse = await checkCaptcha(random);
-    }
+    const email = req.query.email; // assuming email is sent as a query parameter
+    const key = checkCaptchaResponse.data.data;
 
-    // Step 3: Send post request to apply CDN account set
-    const cdnApplyResponse = await axios.post('https://external-api.agilecdn.cloud/user/api/user/cdn-accountset-apply?lang=en_US', {
+    const applyResponse = await axios.post('https://external-api.agilecdn.cloud/user/api/user/cdn-accountset-apply?lang=en_US', {
       email: email,
-      veriCode: captchaCheckResponse.data,
+      veriCode: key,
       lang: 'en',
       userType: 0,
-      cdnParam: {
-        // Your CDN parameters here
-      }
+      cdnParam: '{"cdnCacheBehaviorModels":[{"cdnCacheBehaviorForwardModel":{"cookies":{"forward":"none","whitelistedNames":[]},"headerType":0,"headers":[],"queryString":2,"queryStringCacheKeys":[]},"compress":false,"defaultTtl":0,"fieldLevelEncryptionId":"","maxTtl":31536000,"minTtl":0,"originId":"ecaee4e0-b639-11ee-b0c4-db23679837ea-pu.edvin.online","pathPattern":"*","smoothStreaming":false,"type":1,"viewerProtocolPolicy":"allow-all","allowedMethods":3,"isCacheOptions":false}],"cdnCertificateModel":{"cdnCertificateId":"","minimumProtocolVersion":"","sslSupportMethod":false,"type":1,"cdnConfigId":"","id":""},"cdnOriginsModels":[{"domainName":"pu.edvin.online","httpPort":80,"httpsPort":443,"originCustomHeaders":[],"originId":"ecaee4e0-b639-11ee-b0c4-db23679837ea-pu.edvin.online","originKeepaliveTimeout":5,"originPath":"","originProtocolPolicy":"match-viewer","originReadTimeout":30,"originSslProtocols":["TLSv1"],"type":1,"originType":1}],"comment":"","defaultRootObject":"","customHostType":1,"customHost":"","domain":"","httpVersion":"http2","isIpv6Enabled":false,"status":1,"type":1,"deployStatus":0,"platformDomain":"","visitRegion":"Non-Asia-Pacific","cdnRestrictionModel":{"locations":["CN","HK","MO"],"restrictionType":2},"configModel":7}'
     });
 
-    const password = cdnApplyResponse.data.data.password
-
-    // Step 4: Login using the obtained password
+    const password = applyResponse.data.password;
     const loginResponse = await axios.post('https://external-api.agilecdn.cloud/user/auth/login', {
       username: email,
       password: password,
-      accountNumber: '',
+      accountNumber: "",
       channel: 86,
-      code: '',
-      terminal: ''
+      code: "",
+      terminal: ""
     });
 
-    res.json(loginResponse.data);
+    res.send(loginResponse.data);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).send('An error occurred');
   }
 });
 
-async function checkCaptcha(random) {
-  const checkCaptchaUrl = `https://external-api.agilecdn.cloud/user/api/user/checkCaptcha?point=84&random=${random}`;
-  return await axios.get(checkCaptchaUrl);
-}
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.listen(port, () => {
+  console.log(Server is running at http://localhost:${port});
 });
