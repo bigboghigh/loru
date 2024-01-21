@@ -12,17 +12,17 @@ app.get('/', async (req, res) => {
     let checkCaptchaResponse;
     do {
       checkCaptchaResponse = await axios.get('https://external-api.agilecdn.cloud/user/api/user/checkCaptcha?point=84&random=${random}');
-      if (checkCaptchaResponse.data.data === null) {
+      if (checkCaptchaResponse.data.data.data === null) {
         captchaImageResponse = await axios.get('https://external-api.agilecdn.cloud/user/api/user/captchaImage');
         random = captchaImageResponse.data.random;
       }
-    } while (checkCaptchaResponse.data.data === null);
+    } while (checkCaptchaResponse.data.data.data=== null);
 
     const email = req.query.email; // assuming email is sent as a query parameter
-    const key = checkCaptchaResponse.data.data;
+    const key = checkCaptchaResponse.data.data.data;
 
     const applyResponse = await axios.post('https://external-api.agilecdn.cloud/user/api/user/cdn-accountset-apply?lang=en_US', {
-      email: email,
+      email: "sshah@byom.deh",
       veriCode: key,
       lang: 'en',
       userType: 0,
