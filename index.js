@@ -16,7 +16,7 @@ app.get('/processCaptcha', async (req, res) => {
       random = captchaImageResponse.data.data.random;
 
       // Send request to the second API with the random value
-      const checkCaptchaResponse = await axios.get(https://external-api.agilecdn.cloud/user/api/user/checkCaptcha?point=84&random=${random});
+      const checkCaptchaResponse = await axios.get('https://external-api.agilecdn.cloud/user/api/user/checkCaptcha?point=84&random=${random}');
 
       if (checkCaptchaResponse.data.data.data !== null) {
         key = checkCaptchaResponse.data.data.data;
