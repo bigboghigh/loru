@@ -21,7 +21,7 @@ app.get('/processRequest', async (req, res) => {
     while (captchaCheckResponse.data === null) {
       // If data is still null, fetch a new captcha and repeat the process
       const newFirstApiResponse = await axios.get('https://external-api.agilecdn.cloud/user/api/user/captchaImage');
-      random = newFirstApiResponse.data.get('random');
+      random = newFirstApiResponse.data.data.random
       captchaCheckResponse = await checkCaptcha(random);
     }
 
@@ -36,7 +36,7 @@ app.get('/processRequest', async (req, res) => {
       }
     });
 
-    const password = cdnApplyResponse.data.get('password');
+    const password = cdnApplyResponse.data.data.password
 
     // Step 4: Login using the obtained password
     const loginResponse = await axios.post('https://external-api.agilecdn.cloud/user/auth/login', {
