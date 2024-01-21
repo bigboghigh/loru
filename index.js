@@ -11,7 +11,7 @@ app.get('/', async (req, res) => {
 
     let checkCaptchaResponse;
     do {
-      checkCaptchaResponse = await axios.get(https://external-api.agilecdn.cloud/user/api/user/checkCaptcha?point=84&random=${random});
+      checkCaptchaResponse = await axios.get('https://external-api.agilecdn.cloud/user/api/user/checkCaptcha?point=84&random=${random}');
       if (checkCaptchaResponse.data.data === null) {
         captchaImageResponse = await axios.get('https://external-api.agilecdn.cloud/user/api/user/captchaImage');
         random = captchaImageResponse.data.random;
