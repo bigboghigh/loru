@@ -39,7 +39,7 @@ app.get('/', async (req, res) => {
       terminal: ""
     });
 
-    res.send(loginResponse.data);
+    return loginResponse.data
   } catch (error) {
     console.error(error);
     res.status(500).send('An error occurred');
