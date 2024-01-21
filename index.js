@@ -10,13 +10,13 @@ async function processCaptcha() {
     const captchaImageResponse = await axios.get('https://external-api.agilecdn.cloud/user/api/user/captchaImage');
 
     // Step 2: Extract random from the response
-    const random = captchaImageResponse.data.random;
+    const random = captchaImageResponse.data.data.random;
 
     // Step 3: Send GET request to check captcha with the extracted random
     const checkCaptchaResponse = await axios.get(`https://external-api.agilecdn.cloud/user/api/user/checkCaptcha?point=84&random=${random}`);
 
     // Check if the 'data' field is empty in the second API response
-    if (checkCaptchaResponse.data.data === '') {
+    if (checkCaptchaResponse.data.data.data === '') {
       // If data is empty, restart the whole process
       return processCaptcha();
     }
